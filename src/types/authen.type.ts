@@ -3,11 +3,6 @@ export interface LoginResult {
     token?:string;
     message:string;
     userid?:string;
-}
-
-export interface RegisterResult {
-    result:string;
-    token?:string;
-    message:string;
-    userid?:string;
+    email?:string;
+    password?:string;
 }

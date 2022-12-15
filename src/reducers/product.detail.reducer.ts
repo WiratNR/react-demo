@@ -5,13 +5,13 @@ import {
 } from "../Constants";
 import { Product } from "../types/product.type";
 
-export interface ProductEditState {
+export interface ProductDetailState {
   result: Product | null;
   isFetching: boolean;
   isError: boolean;
 }
 
-const initialState: ProductEditState = {
+const initialState: ProductDetailState = {
   result: null,
   isFetching: false,
   isError: false,

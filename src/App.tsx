@@ -3,44 +3,20 @@ import {
   createTheme,
   styled,
   ThemeProvider,
-  useTheme,
 } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import Header from "./components/layouts/Header";
-import Menu from "./components/layouts/Menu";
 import { Link, Navigate, Route, Routes } from "react-router-dom";
-import StockPage from "./components/pages/StockPage";
 import LoginPage from "./components/pages/LoginPage";
-import RegisterPage from "./components/pages/RegisterPage";
 import ProductPage from "./components/pages/ProductPage";
-import ProductCreatePage from "./components/pages/ProductCreatePage";
-import ProductEditPage from "./components/pages/ProductEditPage";
-import ReportPage from "./components/pages/ReportPage";
-import AboutUs from "./components/pages/AboutUs";
+import ProductDetailPage from "./components/pages/ProductDetailPage";
 import { blue, blueGrey } from "@mui/material/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { RootReducers } from "./reducers";
 import * as loginActions from "./actions/login.action";
 import PublicRoutes from "./router/public.routes";
 import ProtectedRoutes from "./router/protected.routes";
-import MajorPage from "./components/pages/MajorPage";
 
 const drawerWidth = 240;
 
@@ -127,28 +103,17 @@ export default function App() {
   const [open, setOpen] = React.useState(true);
   const loginReducer = useSelector((state: RootReducers) => state.loginReducer);
   const dispatch: any = useDispatch();
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+
 
   React.useEffect(() => {
     dispatch(loginActions.restoreLogin());
   }, []);
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        {loginReducer.result && (
-          <Header open={open} drawerOpen={handleDrawerOpen} />
-        )}
-        {loginReducer.result && (
-          <Menu open={open} drawerClose={handleDrawerClose} />
-        )}
+      
         <Main open={open}>
           <DrawerHeader />
           <Routes>
@@ -162,14 +127,8 @@ export default function App() {
 
             {/* Protected routes */}
             <Route path="/" element={<ProtectedRoutes />}>
-              <Route path="/major" element={<MajorPage />} />
-              <Route path="/stock" element={<StockPage />} />
               <Route path="/product" element={<ProductPage />} />
-              <Route path="/product/create" element={<ProductCreatePage />} />
-              <Route path="/product/edit/:id" element={<ProductEditPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/report" element={<ReportPage />} />
-              <Route path="/aboutus" element={<AboutUs />} />
+              <Route path="/product/detail/:id" element={<ProductDetailPage />} />
             </Route>
           </Routes>
         </Main>

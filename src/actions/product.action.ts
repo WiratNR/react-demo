@@ -41,7 +41,7 @@ export const loadProductByKeyword = (keyword: string) => {
 
     if (keyword) {
       let result = await httpClient.get<any>(
-        `${server.PRODUCT_URL}/keyword/${keyword}`
+        `${server.PRODUCT_URL}/search?q=/${keyword}`
       );
       dispatch(setProductSuccessToState(result.data));
     } else {
@@ -52,36 +52,11 @@ export const loadProductByKeyword = (keyword: string) => {
 
 const doGetProducts = async (dispatch: any) => {
   try {
-    const result = await httpClient.get<Product[]>(
-      `${server.PRODUCT_URL}?action=getData`
+    const result = await httpClient.get<Product>(
+      `${server.PRODUCT_URL}`
     );
-    dispatch(setProductSuccessToState(result.data));
+    dispatch(setProductSuccessToState(result.data.products));
   } catch (error) {
     dispatch(setProductFailedToState());
   }
-};
-
-export const addProduct = (formData: any, navigate: any) => {
-  return async (dispatch: any) => {
-    //upload Image
-    const respon = await httpClient.post(
-      server.UPLOAD_IMAGE_URL,
-      JSON.stringify(formData.url_img)
-    );
-    delete formData.file_obj;
-    formData.url_img = respon.data.fileId;
-    
-    //
-    await httpClient.post(server.PRODUCT_URL, JSON.stringify(formData));
-    navigate("/stock");
-  };
-};
-
-export const deleteProduct = (id: string,idImg : string) => {
-  return async (dispatch: Dispatch<AnyAction>) => {
-    dispatch(setProductFetchingToState());
-    await httpClient.get(`${server.PRODUCT_URL}?action=deleteById&id=${id}`);
-    await httpClient.get(`${server.UPLOAD_IMAGE_URL}?action=deleteImage&id=${idImg}`);
-    await doGetProducts(dispatch);
-  };
 };

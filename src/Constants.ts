@@ -32,7 +32,7 @@ export const PRODUCT_EDIT_FETCHING = "PRODUCT_EDIT_FETCHING";
 export const PRODUCT_EDIT_SUCCESS = "PRODUCT_EDIT_SUCCESS";
 export const PRODUCT_EDIT_FAILED = "PRODUCT_EDIT_FAILED";
 
-export const apiUrl = "https://script.google.com/macros/s/";
+export const apiUrl = "https://dummyjson.com/";
 export const imageUrl = "http://localhost:8085";
 
 export const YES = "YES";
@@ -47,19 +47,7 @@ export const LOGIN_STATUS = "LOGIN_STATUS";
 
 export const server = {
   LOGIN_URL: `AKfycbzOUosyAs29x47UA9uTk9B092qwKTsmFzkgY9D7zGuVejzbTx73iKc3cuoVOsvswyk/exec`,
-  REGISTER_URL: `AKfycbzOUosyAs29x47UA9uTk9B092qwKTsmFzkgY9D7zGuVejzbTx73iKc3cuoVOsvswyk/exec`,
-  PRODUCT_URL: `AKfycbzdYfbz_O9WYLr7jMSwX6Q_e7YCC7l0JR9OL76Hdh7HHjxATDy_FfBcbF5wQfiLccS8/exec`,
-  STOCK_URL:`AKfycbzkQOezpd4LCOFin_zHA8mWQqqtb41tjgeLjVbGxfqjGFJNIBTuLxUtiZ4M7tnXIocj/exec`,
-  UPLOAD_IMAGE_URL: `AKfycby-FxMbJzAYS2s_RNRtYWjBjH7vWYceybh7tUICOAV8eFvmiKSkHubaRsLDDkY41Q/exec`,
-  MAJOR_URL: `AKfycbx8_jE-h-N2Ba09nG3LplPMo5XWJxYjq5aoGU4ZeRgUHpmTW8oagRVmnkZisjOCx9o/exec`,
-  TRANSACTION_URL: `transaction`,
-  REPORT_URL: `stock/report`,
-  LOGIN_PASSED: `yes`,
-};
-
-export const image_url = {
-  URL_SHOW_IMG: `https://drive.google.com/uc?id=`,
-  IMG_UNKHOW: `1-5ByF29Y1C2C3o0QynFwbob7YtVmF4Ym`,
+  PRODUCT_URL: `products`,
 };
 
 // Error Code

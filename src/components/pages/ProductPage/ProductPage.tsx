@@ -1,43 +1,27 @@
 import * as React from "react";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import InfoIcon from '@mui/icons-material/Info';
 
-import { imageUrl, image_url } from "../../../Constants";
 import * as productActions from "../../../actions/product.action";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootReducers } from "../../../reducers";
 import {
   Typography,
-  Stack,
   IconButton,
   Box,
   TextField,
-  Fab,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grid,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
 } from "@mui/material";
 import { NumericFormat } from "react-number-format";
-import Moment from "react-moment";
-import {
-  Add,
-  AddShoppingCart,
-  AssignmentReturn,
-  Clear,
-  NewReleases,
-  Search,
-  Star,
-} from "@mui/icons-material";
-import { Link, useNavigate } from "react-router-dom";
+import { Clear, Search } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 import { useDebounce } from "@react-hook/debounce";
-import { Product } from "../../../types/product.type";
-import StockCard from "../../layouts/StockCard";
 import { useAppDispatch } from "../../..";
+import _ from "lodash";
 
 interface QuickSearchToolbarProps {
   clearSearch: () => void;
@@ -87,35 +71,6 @@ function QuickSearchToolbar(props: QuickSearchToolbarProps) {
           },
         }}
       />
-      {/* <Box sx={{ flexGrow: 1 }} />
-      <Button variant="contained" size="large">เพิ่มสินค้า</Button> */}
-      {/* <Fab
-        color="primary"
-        aria-label="add"
-        component={Link}
-        to="/product/create"
-        sx={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-        }}
-      >
-        <Add />
-      </Fab> */}
-      <Button
-        variant="contained"
-        aria-label="add"
-        component={Link}
-        to="/product/create"
-        sx={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-        }}
-        startIcon={<Add />}
-      >
-        New Product
-      </Button>
     </Box>
   );
 }
@@ -128,69 +83,83 @@ export default function ProductPage() {
   const [keywordSearch, setKeywordSearch] = useDebounce<string>("", 1000);
   const [keywordSearchNoDelay, setKeywordSearchNoDelay] =
     React.useState<string>("");
-    
-  const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(
-    null
-  );
-  const [openDialog, setOpenDialog] = React.useState<boolean>(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
     dispatch(productActions.loadProductByKeyword(keywordSearch));
-  }, [keywordSearch]);
+  }, [dispatch, keywordSearch]);
 
   React.useEffect(() => {
     dispatch(productActions.loadProduct());
-  }, []);
+  }, [dispatch]);
+
+  const [filter, setFilter] = React.useState("");
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setFilter(event.target.value as string);
+    switch (event.target.value as string) {
+      case "1":
+        console.log("https://dummyjson.com/products?limit=100");
+        break;
+      case "2":
+        productReducer.result = productReducer.result.filter(
+          (r) => r.price >= 1000
+        );
+        break;
+      case "3":
+        const data = productReducer.result.map((r) => r.price * r.stock);
+        console.log(data);
+        break;
+      case "4":
+        productReducer.result = productReducer.result = _.sortBy(
+          productReducer.result,
+          "rating"
+        );
+
+        break;
+      case "5":
+        // Use the reduce function to calculate the total price
+        const totalPrice = productReducer.result.reduce(
+          (prevPrice, currPrice) => {
+            return prevPrice + currPrice.price;
+          },
+          0
+        );
+
+        console.log(totalPrice);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const dataFilter = [
+    { value: "1", label: "โชว์สินค้าทั้งหมด" },
+    { value: "2", label: "ราคามากว่า 1000" },
+    { value: "3", label: "ราคารวมต่อชิ้น" },
+    { value: "4", label: "เรียงเรตติ้ง" },
+    { value: "5", label: "แสดงราคารวมทั้งหมด" },
+  ];
 
   const stockColumns: GridColDef[] = [
     {
-      headerName: "#",
-      headerAlign: "center",
-      align: "center",
-      field: "id",
-      width: 120,
-    },
-    {
       headerName: "IMG",
       headerAlign: "center",
-      field: "url_img",
+      field: "thumbnail",
       width: 80,
       renderCell: ({ value }: GridRenderCellParams<string>) => (
         // eslint-disable-next-line jsx-a11y/alt-text
         <img
-          src={`${
-            value
-              ? `${image_url.URL_SHOW_IMG}` + value
-              : `${image_url.URL_SHOW_IMG}${image_url.IMG_UNKHOW}`
-          }`}
+          src={`${value}`}
           style={{ width: "100%", height: "100%", borderRadius: "5%" }}
         />
       ),
     },
     {
-      headerName: "NAME",
+      headerName: "Title",
       headerAlign: "center",
-      field: "product_name",
+      field: "title",
       width: 500,
-    },
-    {
-      headerName: "UNIT",
-      headerAlign: "center",
-      width: 120,
-      align: "left",
-      field: "unit",
-      //   renderCell: ({ value }: GridRenderCellParams<string>) => (
-      //     <Typography variant="body1">
-      //       <NumericFormat
-      //         value={value}
-      //         displayType={"text"}
-      //         thousandSeparator={true}
-      //         decimalScale={0}
-      //         fixedDecimalScale={true}
-      //       />
-      //     </Typography>
-      //   ),
     },
     {
       headerName: "PRICE",
@@ -211,160 +180,61 @@ export default function ProductPage() {
         </Typography>
       ),
     },
-    // {
-    //   headerName: "TIME",
-    //   field: "createdAt",
-    //   width: 220,
-    //   renderCell: ({ value }: GridRenderCellParams<string>) => (
-    //     <Typography variant="body1">
-    //       <Moment format="DD/MM/YYYY HH:mm">{value}</Moment>
-    //     </Typography>
-    //   ),
-    // },
     {
-      headerName: "ACTION",
+      headerName: "STOCK",
+      headerAlign: "center",
+      align: "right",
+      field: "stock",
+      width: 120,
+      renderCell: ({ value }: GridRenderCellParams<string>) => (
+        <Typography variant="body1">
+          <NumericFormat
+            value={value}
+            displayType={"text"}
+            thousandSeparator={true}
+            decimalScale={2}
+            fixedDecimalScale={true}
+            // prefix={"฿"}
+          />
+        </Typography>
+      ),
+    },
+    {
+      headerName: "Detail",
       headerAlign: "center",
       field: ".",
       width: 120,
+      align: "center",
       renderCell: ({ row }: GridRenderCellParams<string>) => (
-        <Stack direction="row">
-          <IconButton
-            aria-label="edit"
-            size="large"
-            onClick={() => {
-              navigate("/product/edit/" + row.id);
-            }}
-          >
-            <EditIcon fontSize="inherit" />
-          </IconButton>
-          <IconButton
-            aria-label="delete"
-            size="large"
-            onClick={() => {
-              setSelectedProduct(row);
-              setOpenDialog(true);
-            }}
-          >
-            <DeleteIcon fontSize="inherit" />
-          </IconButton>
-        </Stack>
+        <IconButton
+          aria-label="edit"
+          size="large"
+          onClick={() => {
+            navigate("/product/detail/" + row.id);
+          }}
+        >
+          <InfoIcon fontSize="inherit" />
+        </IconButton>
       ),
     },
   ];
 
-  const handleDeleteConfirm = () => {
-    dispatch(
-      productActions.deleteProduct(
-        String(selectedProduct!.id!),
-        String(selectedProduct!.url_img!)
-      )
-    );
-    setOpenDialog(false);
-  };
-
-  const showDialog = () => {
-    if (selectedProduct === null) {
-      return "";
-    }
-
-    return (
-      <Dialog
-        open={openDialog}
-        keepMounted
-        aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle
-          id="alert-dialog-slide-title"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <img
-            src={`${image_url.URL_SHOW_IMG}${selectedProduct.url_img}`}
-            style={{
-              width: "30%",
-              borderRadius: "5%",
-            }}
-          />
-          <br />
-          Confirm to delete the product? : {selectedProduct.product_name}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            id="alert-dialog-slide-description"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            You cannot restore deleted product.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setOpenDialog(false)}
-            color="info"
-            variant="outlined"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleDeleteConfirm}
-            color="error"
-            variant="outlined"
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  };
-
   return (
     <Box>
-      {/* Summary Icons */}
-      <Grid container style={{ marginBottom: 16 }} spacing={7}>
-        <Grid item lg={3} md={6}>
-          <StockCard
-            icon={AddShoppingCart}
-            title="TOTAL"
-            subtitle="112 THB"
-            color="#00a65a"
-          />
-        </Grid>
-
-        <Grid item lg={3} md={6}>
-          <StockCard
-            icon={NewReleases}
-            title="EMPTY"
-            subtitle="9 PCS."
-            color="#f39c12"
-          />
-        </Grid>
-
-        <Grid item lg={3} md={6}>
-          <StockCard
-            icon={AssignmentReturn}
-            title="RETURN"
-            subtitle="1 PCS."
-            color="#dd4b39"
-          />
-        </Grid>
-
-        <Grid item lg={3} md={6}>
-          <StockCard
-            icon={Star}
-            title="LOSS"
-            subtitle="5 PCS."
-            color="#00c0ef"
-          />
-        </Grid>
-      </Grid>
-
+      <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel id="demo-simple-select-label">filter</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          onChange={handleChange}
+        >
+          {dataFilter?.map((item) => (
+            <MenuItem key={item.value} value={item.value}>
+              {item.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <DataGrid
         components={{ Toolbar: QuickSearchToolbar }}
         componentsProps={{
@@ -386,8 +256,6 @@ export default function ProductPage() {
         pageSize={15}
         rowsPerPageOptions={[15]}
       />
-
-      {showDialog()}
     </Box>
   );
 }

@@ -22,6 +22,7 @@ import { useAppDispatch } from "../../..";
 import { InputAdornment } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import { VisibilityOff } from "@mui/icons-material";
+import * as Yup from 'yup';
 
 // npx crcf -f --notest --typescript DashBoard
 
@@ -63,10 +64,10 @@ const LoginPage: React.FC<any> = () => {
           margin="normal"
           required
           fullWidth
-          id="username"
-          label="Username"
+          id="email"
+          label="Email"
           onChange={handleChange}
-          value={values.username}
+          value={values.email}
           autoComplete="email"
           autoFocus
         />
@@ -93,18 +94,9 @@ const LoginPage: React.FC<any> = () => {
         />
         <br />
 
-        {loginReducer.isError && <Alert severity="error">Login failed</Alert>}
+        {loginReducer.isError && <Alert severity="error">Email or password incorrect</Alert>}
 
         <Stack direction="column" spacing={2} sx={classes.bottons}>
-          {/* <Button
-            onClick={() => navigate("/register")}
-            type="button"
-            fullWidth
-            variant="outlined"
-          >
-            Register
-          </Button> */}
-
           <Button
             type="submit"
             fullWidth
@@ -119,30 +111,22 @@ const LoginPage: React.FC<any> = () => {
     );
   };
 
-  const initialValues: User = { username: "", password: "" };
+  const initialValues: User = { email: "", password: "" };
+
+  const SignupSchema = Yup.object().shape({
+    password: Yup.string()
+      .min(4, 'Too Short!')
+      .required('Required'),
+    email: Yup.string().email('Invalid email').required('Required'),
+  });
 
   return (
     <>
       <Box sx={classes.root}>
         <Card sx={{ maxWidth: 345 }}>
           <CardContent>
-            <Typography
-              gutterBottom
-              variant="h4"
-              component="h2"
-              textAlign="center"
-            >
-              Stock Manager
-            </Typography>
-            <Typography
-              gutterBottom
-              variant="subtitle1"
-              component="h3"
-              textAlign="center"
-            >
-              กรุณา Login ก่อนเข้าใช้ระบบ
-            </Typography>
             <Formik
+            //  validationSchema={SignupSchema}
               onSubmit={(values, {}) => {
                 dispatch(loginActions.login(values, navigate));
               }}

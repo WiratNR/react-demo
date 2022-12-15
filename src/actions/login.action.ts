@@ -30,25 +30,24 @@ export const setLogoutToState = () => ({
   type: LOGOUT,
 });
 
+const data = {
+  email: "aa@bb.cc",
+  password: "1234",
+  result: OK,
+  message: "Login Successfully",
+  token:"",
+};
+
 export const login = (user: User, navigate: any) => {
   return async (dispatch: any) => {
     try {
       //begin connecting...
       dispatch(setLoginFetchingToState());
 
-      //connect
-      const result = await httpClient.get<LoginResult>(
-        `${server.LOGIN_URL}?action=login&u=${user.username}&p=${user.password}`
-      );
-
-      if (result.data.result === OK) {
+      if (user.email === data.email && user.password === data.password) {
         setTimeout(() => {
-          localStorage.setItem(TOKEN, result.data.token!);
-          localStorage.setItem(USERNAME, result.data.message!);
-          localStorage.setItem(USERID, result.data.userid!);
-          dispatch(setLoginSuccessToState(result.data));
-          alert("Login Successfully");
-
+          localStorage.setItem(TOKEN, "1234");
+          dispatch(setLoginSuccessToState(data));
           navigate("/stock");
         }, 1000);
       } else {
@@ -73,16 +72,5 @@ export const restoreLogin = () => {
         })
       );
     }
-  };
-};
-
-export const logout = (navigate: any) => {
-  return (dispatch: any) => {
-    localStorage.removeItem(TOKEN);
-    localStorage.removeItem(USERNAME);
-    localStorage.removeItem(USERID);
-    dispatch(setLogoutToState());
-    alert("Logout sucsessfully");
-    navigate("/login");
   };
 };
